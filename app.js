@@ -106,7 +106,7 @@ function navToggle(e) {
         e.target.classList.remove("active");
         gsap.to('.line1', 0.5, { rotate: '0', y: 0, background: "white" });
         gsap.to('.line2', 0.5, { rotate: '0', y: 0, background: "white" });
-        gsap.to('#logo', 0.5, { color: "black" });
+        gsap.to('#logo', 0.5, { color: "white" });
         gsap.to('.nav-bar', 1, { clipPath: 'circle(50px at 100% -10%)' });
         document.body.classList.remove("hide");
     }
