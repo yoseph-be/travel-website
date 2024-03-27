@@ -1,6 +1,7 @@
 let controller;
 let slideScene;
 let pageScene;
+let detailScene;
 
 function animateSlides() {
     //init controller
@@ -39,8 +40,10 @@ function animateSlides() {
             .addTo(controller);
         //New Animation
         const pageTl = gsap.timeline();
-
-        pageTl.fromTo(slide, { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.5 })
+        // let nextSlide = slide.length - 1 === index ? 'end' : slide[index + 1];
+        // pageTl.fromTo(nextSlide, { y: '0%' }, { y: '50%' });
+        pageTl.fromTo(slide, { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.5 });
+        // pageTl.fromTo(nextSlide, { y: '50%' }, { y: '0%' }, '-=0.5')
 
 
         //Create new scene
@@ -112,9 +115,52 @@ function navToggle(e) {
     }
 }
 
+//Barba page transitions
+
+barba.init({
+    views: [{
+            namespace: 'home',
+            beforeEnter() {
+                animateSlides();
+                logo.href = './index.html'
+            },
+            beforeLeave() {
+                slideScene.destroy();
+                pageScene.destroy();
+                controller.destroy();
+            }
+        },
+        {
+            namespace: 'fashion',
+            beforeEnter() {
+                logo.href = '../index.html';
+                detailAnimation();
+                gsap.fromTo('.nav-header', 1, { y: '100%' }, { y: '0%', ease: "power2.inOut" })
+            }
+        }
+    ],
+    transitions: [{
+        leave({ current, next }) {
+            let done = this.async();
+            //Animation
+            const t1 = gsap.timeline({ defaults: { ease: "power2.inOut" } });
+            t1.fromTo(current.container, 1, { opacity: 1 }, { opacity: 0 });
+            t1.fromTo('.swipe', 0.75, { x: '-100%' }, { x: '0', onComplete: done }, '-=0.5');
+        },
+        enter({ current, next }) {
+            let done = this.async();
+            window.scrollTo(0, 0);
+            //Animation
+            const t1 = gsap.timeline({ defaults: { ease: "power2.inOut" } });
+            t1.fromTo('.swipe', 0.75, { x: '0%' }, { x: '100%', stagger: 0.25, onComplete: done }, '-=0.5');
+            t1.fromTo(next.container, 1, { opacity: 0 }, { opacity: 1 });
+        }
+    }]
+});
+
+
+
 //event listeners
 burger.addEventListener('click', navToggle);
 window.addEventListener('mousemove', cursor);
 window.addEventListener('mouseover', activeCursor);
-
-animateSlides();
